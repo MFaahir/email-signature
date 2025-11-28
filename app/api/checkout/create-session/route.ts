@@ -55,7 +55,7 @@ export async function POST(request: Request) {
               name: "Email Signature Generator - Lifetime Access",
               description: "One-time payment for lifetime access to create professional email signatures",
             },
-            unit_amount: 500, // $5.00 in cents
+            unit_amount: 499, // $4.99 in cents
           },
           quantity: 1,
         },

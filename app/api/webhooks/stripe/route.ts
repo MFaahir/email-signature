@@ -61,7 +61,7 @@ export async function POST(request: Request) {
           userId,
           clerkId,
           stripePaymentId: session.payment_intent as string,
-          amount: 500,
+          amount: 499,
           status: "completed",
         });
 

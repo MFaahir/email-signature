@@ -54,7 +54,7 @@ export function PaymentGate() {
 
         <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
           <div className="flex items-baseline justify-center mb-4">
-            <span className="text-5xl font-bold text-gray-900">$5</span>
+            <span className="text-5xl font-bold text-gray-900">$4.99</span>
             <span className="text-gray-600 ml-2">one-time</span>
           </div>
           <p className="text-center text-sm text-gray-600">
@@ -94,7 +94,7 @@ export function PaymentGate() {
           ) : (
             <>
               <CreditCard className="w-5 h-5 mr-2" />
-              Pay $5 Now
+              Pay $4.99 Now
             </>
           )}
         </Button>

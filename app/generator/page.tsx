@@ -4,7 +4,6 @@ import { Header } from "@/components/layout/Header";
 import { ActionButtons } from "@/components/signature/ActionButtons";
 import { SignatureForm } from "@/components/signature/SignatureForm";
 import { SignaturePreview } from "@/components/signature/SignaturePreview";
-import { PaymentGate } from "@/components/payment/PaymentGate";
 import { Button } from "@/components/ui/button";
 import { initialSignatureData, SignatureData } from "@/lib/types";
 import { useRef, useState, useEffect, Suspense } from "react";
@@ -14,49 +13,7 @@ function GeneratorContent() {
   const [data, setData] = useState<SignatureData>(initialSignatureData);
   const [template, setTemplate] = useState("simple");
   const previewRef = useRef<HTMLDivElement>(null);
-  const [hasPaid, setHasPaid] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
-
-  useEffect(() => {
-    checkPaymentStatus();
-  }, []);
-
-  const checkPaymentStatus = async () => {
-    try {
-      const response = await fetch("/api/payment/check");
-      const data = await response.json();
-      setHasPaid(data.hasPaid);
-    } catch (error) {
-      console.error("Error checking payment status:", error);
-      setHasPaid(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Show success message if redirected from successful payment
-  useEffect(() => {
-    if (searchParams.get("success") === "true") {
-      // Recheck payment status after successful payment
-      checkPaymentStatus();
-    }
-  }, [searchParams]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!hasPaid) {
-    return <PaymentGate />;
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -66,7 +23,7 @@ function GeneratorContent() {
           {searchParams.get("success") === "true" && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
               <p className="text-green-800 text-center font-medium">
-                🎉 Payment successful! Welcome to Email Signature Generator.
+                🎉 Payment successful! You can now export unlimited signatures.
               </p>
             </div>
           )}
@@ -127,3 +84,4 @@ export default function GeneratorPage() {
     </Suspense>
   );
 }
+

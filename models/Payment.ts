@@ -29,7 +29,7 @@ const PaymentSchema: Schema = new Schema(
     },
     amount: {
       type: Number,
-      default: 500, // $5.00 in cents
+      default: 499, // $4.99 in cents
     },
     status: {
       type: String,
