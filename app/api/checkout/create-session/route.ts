@@ -45,6 +45,7 @@ export async function POST(request: Request) {
     }
 
     // Create Stripe checkout session
+    console.log("Creating Stripe checkout session for user:", userId);
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -69,11 +70,22 @@ export async function POST(request: Request) {
       },
     });
 
+    console.log("Checkout session created successfully:", session.id);
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error) {
     console.error("Error creating checkout session:", error);
+    
+    // Log more details about the error
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+    
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error"
+      },
       { status: 500 }
     );
   }
