@@ -13,27 +13,36 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await connectDB();
+    try {
+      await connectDB();
 
-    const user = await User.findOne({ clerkId: userId });
+      const user = await User.findOne({ clerkId: userId });
 
-    if (!user) {
+      if (!user) {
+        return NextResponse.json({
+          hasPaid: false,
+          message: "User not found",
+        });
+      }
+
+      // Check for completed payment
+      const completedPayment = await Payment.findOne({
+        clerkId: userId,
+        status: "completed",
+      });
+
+      return NextResponse.json({
+        hasPaid: user.hasPaid || !!completedPayment,
+        userId: user._id,
+      });
+    } catch (dbError) {
+      console.error("Database error in payment check:", dbError);
+      // Return unpaid status if database is unavailable
       return NextResponse.json({
         hasPaid: false,
-        message: "User not found",
+        message: "Database temporarily unavailable",
       });
     }
-
-    // Check for completed payment
-    const completedPayment = await Payment.findOne({
-      clerkId: userId,
-      status: "completed",
-    });
-
-    return NextResponse.json({
-      hasPaid: user.hasPaid || !!completedPayment,
-      userId: user._id,
-    });
   } catch (error) {
     console.error("Error checking payment status:", error);
     return NextResponse.json(
