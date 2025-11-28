@@ -7,10 +7,10 @@ import { SignaturePreview } from "@/components/signature/SignaturePreview";
 import { PaymentGate } from "@/components/payment/PaymentGate";
 import { Button } from "@/components/ui/button";
 import { initialSignatureData, SignatureData } from "@/lib/types";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function GeneratorPage() {
+function GeneratorContent() {
   const [data, setData] = useState<SignatureData>(initialSignatureData);
   const [template, setTemplate] = useState("simple");
   const previewRef = useRef<HTMLDivElement>(null);
@@ -110,5 +110,20 @@ export default function GeneratorPage() {
       </div>
     </div>
     </div>
+  );
+}
+
+export default function GeneratorPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <GeneratorContent />
+    </Suspense>
   );
 }
