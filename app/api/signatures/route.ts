@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import Signature from "@/models/Signature";
@@ -68,39 +68,46 @@ export async function POST(request: Request) {
     if (!user) {
       console.log("User not found, attempting to auto-create...");
       try {
-        const { currentUser: getClerkUser } = await import("@clerk/nextjs/server");
-        const clerkUser = await getClerkUser();
+        const clerkUser = await currentUser();
         
         if (clerkUser) {
           console.log("Clerk user fetched:", clerkUser.id);
-          user = await User.create({
+          
+          // Define user data
+          const userData = {
             clerkId: userId,
             email: clerkUser.emailAddresses[0]?.emailAddress || "",
             firstName: clerkUser.firstName || "",
             lastName: clerkUser.lastName || "",
             plan: "free",
             signatureLimit: 3,
-          });
-          console.log(`Auto-created user: ${userId}`);
+          };
+
+          try {
+            user = await User.create(userData);
+            console.log(`Auto-created user: ${userId}`);
+          } catch (createError: any) {
+            // Handle race condition: if duplicate key error (code 11000), try to find user again
+            if (createError.code === 11000) {
+              console.log("Duplicate key error (race condition), fetching user again...");
+              user = await User.findOne({ clerkId: userId });
+              if (!user) {
+                throw new Error("User creation failed and user not found on retry");
+              }
+            } else {
+              throw createError;
+            }
+          }
         } else {
           console.error("Failed to fetch Clerk user details");
           return NextResponse.json({ error: "User not found and failed to fetch details" }, { status: 404 });
         }
       } catch (userCreateError: any) {
         console.error("Error auto-creating user:", userCreateError);
-        
-        // Handle race condition: if duplicate key error (code 11000), try to find user again
-        if (userCreateError.code === 11000) {
-          console.log("Duplicate key error (race condition), fetching user again...");
-          user = await User.findOne({ clerkId: userId });
-          if (user) {
-            console.log("User found on retry");
-          } else {
-            return NextResponse.json({ error: "Failed to create or find user" }, { status: 500 });
-          }
-        } else {
-          return NextResponse.json({ error: "Failed to create user record" }, { status: 500 });
-        }
+        return NextResponse.json({ 
+          error: "Failed to create user record", 
+          details: userCreateError.message 
+        }, { status: 500 });
       }
     }
 
