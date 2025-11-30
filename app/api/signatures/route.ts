@@ -53,9 +53,26 @@ export async function POST(request: Request) {
     await connectDB();
 
     // Get user
-    const user = await User.findOne({ clerkId: userId });
+    let user = await User.findOne({ clerkId: userId });
+    
+    // If user doesn't exist, create them (fallback for webhook issues)
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      const { currentUser: getClerkUser } = await import("@clerk/nextjs/server");
+      const clerkUser = await getClerkUser();
+      
+      if (clerkUser) {
+        user = await User.create({
+          clerkId: userId,
+          email: clerkUser.emailAddresses[0]?.emailAddress || "",
+          firstName: clerkUser.firstName || "",
+          lastName: clerkUser.lastName || "",
+          plan: "free",
+          signatureLimit: 3,
+        });
+        console.log(`Auto-created user: ${userId}`);
+      } else {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
     }
 
     // Check signature limit for free users
