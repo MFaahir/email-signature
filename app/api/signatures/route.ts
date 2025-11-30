@@ -72,22 +72,29 @@ export async function POST(request: Request) {
       let lastName = "";
 
       try {
+        console.log("Attempting to import clerkClient...");
         // Try to fetch user details from Clerk
         const { clerkClient } = await import("@clerk/nextjs/server");
+        console.log("clerkClient imported");
+        
         const client = await clerkClient();
+        console.log("clerkClient instantiated");
+        
         const clerkUser = await client.users.getUser(userId);
+        console.log("clerkUser fetched");
         
         if (clerkUser) {
-          console.log("Clerk user fetched via client:", clerkUser.id);
+          console.log("Clerk user found:", clerkUser.id);
           email = clerkUser.emailAddresses[0]?.emailAddress || "";
           firstName = clerkUser.firstName || "";
           lastName = clerkUser.lastName || "";
         }
-      } catch (clerkError) {
+      } catch (clerkError: any) {
         console.error("Failed to fetch Clerk user details:", clerkError);
-        // Continue with empty details - we'll update them later via webhook or next login
-        console.log("Proceeding with placeholder user data");
-        email = `user_${userId}@placeholder.com`; // Fallback email
+        console.error("Clerk error stack:", clerkError?.stack);
+        // Continue with empty details
+        console.log("Proceeding with placeholder user data due to Clerk error");
+        email = `user_${userId}@placeholder.com`;
       }
 
       // Define user data
