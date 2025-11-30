@@ -47,7 +47,7 @@ const SignatureSchema = new mongoose.Schema(
 
 // Generate unique tracking ID before saving
 // Generate unique tracking ID before saving
-SignatureSchema.pre("save", function (next: (err?: mongoose.CallbackError) => void) {
+SignatureSchema.pre("save", function (next: any) {
   if (this.trackingEnabled && !this.trackingId) {
     this.trackingId = `sig_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
