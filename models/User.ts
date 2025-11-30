@@ -11,6 +11,12 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+    },
     plan: {
       type: String,
       enum: ["free", "premium", "lifetime"],

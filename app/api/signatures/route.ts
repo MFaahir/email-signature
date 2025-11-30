@@ -86,9 +86,21 @@ export async function POST(request: Request) {
           console.error("Failed to fetch Clerk user details");
           return NextResponse.json({ error: "User not found and failed to fetch details" }, { status: 404 });
         }
-      } catch (userCreateError) {
+      } catch (userCreateError: any) {
         console.error("Error auto-creating user:", userCreateError);
-        return NextResponse.json({ error: "Failed to create user record" }, { status: 500 });
+        
+        // Handle race condition: if duplicate key error (code 11000), try to find user again
+        if (userCreateError.code === 11000) {
+          console.log("Duplicate key error (race condition), fetching user again...");
+          user = await User.findOne({ clerkId: userId });
+          if (user) {
+            console.log("User found on retry");
+          } else {
+            return NextResponse.json({ error: "Failed to create or find user" }, { status: 500 });
+          }
+        } else {
+          return NextResponse.json({ error: "Failed to create user record" }, { status: 500 });
+        }
       }
     }
 
