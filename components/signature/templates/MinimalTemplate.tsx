@@ -6,12 +6,12 @@ export function MinimalTemplate({ data }: { data: SignatureData }) {
       <table cellPadding="0" cellSpacing="0">
         <tbody>
           <tr>
-            <td style={{ borderLeft: `3px solid ${data.color}`, paddingLeft: "15px" }}>
+            <td style={{ borderLeft: `3px solid ${data.accentColor}`, paddingLeft: "15px" }}>
               <div style={{ fontWeight: "bold", fontSize: "18px", color: "#000" }}>
-                {data.fullName}
+                {data.name}
               </div>
-              <div style={{ textTransform: "uppercase", fontSize: "11px", letterSpacing: "1px", marginBottom: "10px", color: data.color }}>
-                {data.jobTitle}
+              <div style={{ textTransform: "uppercase", fontSize: "11px", letterSpacing: "1px", marginBottom: "10px", color: data.accentColor }}>
+                {data.title}
               </div>
               <div style={{ fontSize: "13px" }}>
                 {data.company}
@@ -26,7 +26,7 @@ export function MinimalTemplate({ data }: { data: SignatureData }) {
               </div>
               {data.website && (
                 <div style={{ marginTop: "5px", fontSize: "13px" }}>
-                  <a href={data.website} style={{ color: data.color, textDecoration: "none", fontWeight: "bold" }}>
+                  <a href={data.website} style={{ color: data.accentColor, textDecoration: "none", fontWeight: "bold" }}>
                     {data.website}
                   </a>
                 </div>

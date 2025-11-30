@@ -6,7 +6,7 @@ export function ColorfulTemplate({ data }: { data: SignatureData }) {
       <table cellPadding="0" cellSpacing="0" style={{ width: "100%" }}>
         <tbody>
           <tr>
-            <td style={{ backgroundColor: data.color, padding: "20px", width: "10px", verticalAlign: "top" }}>
+            <td style={{ backgroundColor: data.accentColor, padding: "20px", width: "10px", verticalAlign: "top" }}>
               {/* Decorative bar */}
             </td>
             <td style={{ padding: "20px", backgroundColor: "#f9f9f9" }}>
@@ -19,11 +19,11 @@ export function ColorfulTemplate({ data }: { data: SignatureData }) {
                   />
                 )}
                 <div>
-                  <div style={{ fontWeight: "bold", fontSize: "20px", color: data.color }}>
-                    {data.fullName}
+                  <div style={{ fontWeight: "bold", fontSize: "20px", color: data.accentColor }}>
+                    {data.name}
                   </div>
                   <div style={{ fontSize: "14px", color: "#666" }}>
-                    {data.jobTitle} @ {data.company}
+                    {data.title} @ {data.company}
                   </div>
                 </div>
               </div>
@@ -47,19 +47,19 @@ export function ColorfulTemplate({ data }: { data: SignatureData }) {
               </div>
 
               <div style={{ marginTop: "15px" }}>
-                 {data.socialLinks.linkedin && (
-                  <a href={data.socialLinks.linkedin} style={{ marginRight: "10px", textDecoration: "none", color: data.color, fontWeight: "bold" }}>
+                 {data.linkedin && (
+                  <a href={data.linkedin} style={{ marginRight: "10px", textDecoration: "none", color: data.accentColor, fontWeight: "bold" }}>
                     in
                   </a>
                 )}
-                {data.socialLinks.twitter && (
-                  <a href={data.socialLinks.twitter} style={{ marginRight: "10px", textDecoration: "none", color: data.color, fontWeight: "bold" }}>
+                {data.twitter && (
+                  <a href={data.twitter} style={{ marginRight: "10px", textDecoration: "none", color: data.accentColor, fontWeight: "bold" }}>
                     X
                   </a>
                 )}
-                {data.socialLinks.instagram && (
-                  <a href={data.socialLinks.instagram} style={{ textDecoration: "none", color: data.color, fontWeight: "bold" }}>
-                    IG
+                {data.github && (
+                  <a href={data.github} style={{ textDecoration: "none", color: data.accentColor, fontWeight: "bold" }}>
+                    GH
                   </a>
                 )}
               </div>

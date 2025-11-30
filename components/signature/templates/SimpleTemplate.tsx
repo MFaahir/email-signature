@@ -16,16 +16,16 @@ export function SimpleTemplate({ data }: { data: SignatureData }) {
               </td>
             )}
             <td style={{ verticalAlign: "top" }}>
-              <div style={{ fontWeight: "bold", fontSize: "16px", color: data.color }}>
-                {data.fullName}
+              <div style={{ fontWeight: "bold", fontSize: "16px", color: data.accentColor }}>
+                {data.name}
               </div>
               <div style={{ fontSize: "14px", marginBottom: "8px" }}>
-                {data.jobTitle} | {data.company}
+                {data.title} | {data.company}
               </div>
               <div style={{ fontSize: "13px", lineHeight: "1.4" }}>
                 {data.email && (
                   <div>
-                    <a href={`mailto:${data.email}`} style={{ color: data.color, textDecoration: "none" }}>
+                    <a href={`mailto:${data.email}`} style={{ color: data.accentColor, textDecoration: "none" }}>
                       {data.email}
                     </a>
                   </div>
@@ -33,26 +33,26 @@ export function SimpleTemplate({ data }: { data: SignatureData }) {
                 {data.phone && <div>{data.phone}</div>}
                 {data.website && (
                   <div>
-                    <a href={data.website} style={{ color: data.color, textDecoration: "none" }}>
+                    <a href={data.website} style={{ color: data.accentColor, textDecoration: "none" }}>
                       {data.website}
                     </a>
                   </div>
                 )}
               </div>
               <div style={{ marginTop: "10px" }}>
-                {data.socialLinks.linkedin && (
-                  <a href={data.socialLinks.linkedin} style={{ marginRight: "10px", textDecoration: "none", color: data.color }}>
+                {data.linkedin && (
+                  <a href={data.linkedin} style={{ marginRight: "10px", textDecoration: "none", color: data.accentColor }}>
                     LinkedIn
                   </a>
                 )}
-                {data.socialLinks.twitter && (
-                  <a href={data.socialLinks.twitter} style={{ marginRight: "10px", textDecoration: "none", color: data.color }}>
+                {data.twitter && (
+                  <a href={data.twitter} style={{ marginRight: "10px", textDecoration: "none", color: data.accentColor }}>
                     Twitter
                   </a>
                 )}
-                {data.socialLinks.instagram && (
-                  <a href={data.socialLinks.instagram} style={{ textDecoration: "none", color: data.color }}>
-                    Instagram
+                {data.github && (
+                  <a href={data.github} style={{ textDecoration: "none", color: data.accentColor }}>
+                    GitHub
                   </a>
                 )}
               </div>
