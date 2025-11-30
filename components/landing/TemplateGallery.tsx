@@ -47,27 +47,27 @@ export function TemplateGallery() {
     : templates.filter((t) => t.category === activeCategory);
 
   return (
-    <section className="py-16 md:py-24 px-6 md:px-12 lg:px-24 bg-white" id="templates">
+    <section className="py-16 md:py-24 px-6 md:px-12 lg:px-24 bg-cream-100" id="templates">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Stunning Templates for Every Style
           </h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-700 text-lg max-w-2xl mx-auto">
             Choose from our professionally designed collection. Fully customizable to match your brand.
           </p>
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12">
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
                 activeCategory === category
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-sage-600 text-white shadow-sm"
+                  : "bg-white text-gray-700 hover:bg-sage-50 border border-cream-300"
               }`}
             >
               {category}
@@ -75,44 +75,36 @@ export function TemplateGallery() {
           ))}
         </div>
 
-        {/* Gallery Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredTemplates.map((template) => (
+        {/* Template Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {filteredTemplates.map((template, index) => (
             <motion.div
               key={template.id}
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-              className="group relative bg-gray-50 rounded-xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all overflow-hidden border border-cream-300"
             >
-              <div className="p-6 h-[280px] flex items-center justify-center overflow-hidden bg-white relative">
+              <div className="p-6 h-[280px] flex items-center justify-center overflow-hidden bg-cream-50 relative">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="transform scale-[0.55] origin-center w-[600px] flex justify-center pointer-events-none select-none">
                     <SignaturePreview data={dummyData} template={template.id} />
                   </div>
                 </div>
               </div>
-              
-              <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
-                <div>
-                  <h3 className="font-semibold text-gray-900">{template.name}</h3>
-                  <p className="text-xs text-gray-500">{template.category}</p>
-                </div>
-                <Link href={`/generator?template=${template.id}`}>
-                  <Button size="sm" variant="outline" className="group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                    Use This
-                  </Button>
-                </Link>
+              <div className="p-4 border-t border-cream-200">
+                <h3 className="font-semibold text-gray-900 mb-1">{template.name}</h3>
+                <p className="text-sm text-gray-600">{template.category}</p>
               </div>
             </motion.div>
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        {/* CTA */}
+        <div className="text-center">
           <Link href="/generator">
-            <Button size="lg" className="text-lg px-8 py-6 rounded-full">
-              View All Templates <ArrowRight className="ml-2 w-5 h-5" />
+            <Button size="lg" className="text-lg px-10 py-7 rounded-full shadow-lg hover:shadow-xl transition-all bg-sage-600 hover:bg-sage-700">
+              Start Creating <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </Link>
         </div>
