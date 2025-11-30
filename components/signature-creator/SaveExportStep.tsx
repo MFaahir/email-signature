@@ -67,7 +67,8 @@ export function SaveExportStep({ data, template, onBack, onSaveSuccess }: SaveEx
         if (error.limitReached) {
           alert(error.message); // TODO: Replace with upgrade modal
         } else {
-          alert("Failed to save signature");
+          const errorMessage = error.details || error.error || "Failed to save signature";
+          alert(`Error: ${errorMessage}`);
         }
       }
     } catch (error) {

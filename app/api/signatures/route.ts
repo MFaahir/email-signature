@@ -175,7 +175,12 @@ export async function POST(request: Request) {
       console.error("Stack:", error.stack);
     }
     return NextResponse.json(
-      { error: "Failed to create signature", details: error instanceof Error ? error.message : String(error) },
+      { 
+        error: "Failed to create signature", 
+        details: error instanceof Error ? error.message : String(error),
+        // If it's a Mongoose validation error, return the specific validation message
+        validationErrors: (error as any).name === 'ValidationError' ? (error as any).errors : undefined
+      },
       { status: 500 }
     );
   }

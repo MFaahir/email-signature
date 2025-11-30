@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TemplateSelector } from "./TemplateSelector";
 import { AutoFillStep } from "./AutoFillStep";
@@ -13,6 +13,34 @@ export function SignatureCreator() {
   const [step, setStep] = useState(1);
   const [template, setTemplate] = useState("simple");
   const [data, setData] = useState<SignatureData>(initialSignatureData);
+
+  // Load saved data from localStorage on mount
+  useEffect(() => {
+    const savedData = localStorage.getItem("signatureData");
+    const savedTemplate = localStorage.getItem("signatureTemplate");
+    
+    if (savedData) {
+      try {
+        setData(JSON.parse(savedData));
+      } catch (e) {
+        console.error("Failed to parse saved signature data");
+      }
+    }
+    
+    if (savedTemplate) {
+      setTemplate(savedTemplate);
+    }
+  }, []);
+
+  // Save data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("signatureData", JSON.stringify(data));
+  }, [data]);
+
+  // Save template to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("signatureTemplate", template);
+  }, [template]);
 
   const [showUpsell, setShowUpsell] = useState(false);
 
