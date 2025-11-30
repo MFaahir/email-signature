@@ -1,25 +1,38 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose from "mongoose";
 
-export interface IUser extends Document {
-  clerkId: string;
-  email: string;
-  hasPaid: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const UserSchema: Schema = new Schema(
+const UserSchema = new mongoose.Schema(
   {
     clerkId: {
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     email: {
       type: String,
       required: true,
     },
+    plan: {
+      type: String,
+      enum: ["free", "premium", "lifetime"],
+      default: "free",
+    },
+    stripeCustomerId: {
+      type: String,
+      sparse: true,
+    },
+    stripeSubscriptionId: {
+      type: String,
+      sparse: true,
+    },
+    subscriptionStatus: {
+      type: String,
+      enum: ["active", "canceled", "past_due", "lifetime"],
+    },
+    signatureLimit: {
+      type: Number,
+      default: 3, // 3 for free, unlimited for premium
+    },
+    // Legacy field for backward compatibility
     hasPaid: {
       type: Boolean,
       default: false,
@@ -30,8 +43,4 @@ const UserSchema: Schema = new Schema(
   }
 );
 
-// Prevent model recompilation in development
-const User: Model<IUser> =
-  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
-
-export default User;
+export default mongoose.models.User || mongoose.model("User", UserSchema);
