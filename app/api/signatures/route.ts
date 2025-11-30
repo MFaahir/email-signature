@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import Signature from "@/models/Signature";
@@ -68,10 +68,12 @@ export async function POST(request: Request) {
     if (!user) {
       console.log("User not found, attempting to auto-create...");
       try {
-        const clerkUser = await currentUser();
+        const { clerkClient } = await import("@clerk/nextjs/server");
+        const client = await clerkClient();
+        const clerkUser = await client.users.getUser(userId);
         
         if (clerkUser) {
-          console.log("Clerk user fetched:", clerkUser.id);
+          console.log("Clerk user fetched via client:", clerkUser.id);
           
           // Define user data
           const userData = {
