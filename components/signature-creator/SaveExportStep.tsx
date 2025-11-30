@@ -22,8 +22,20 @@ export function SaveExportStep({ data, template, onBack, onSaveSuccess }: SaveEx
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [savedSignatureId, setSavedSignatureId] = useState<string | null>(null);
+  const [userPlan, setUserPlan] = useState<string>("free");
   const previewRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Fetch user plan on mount
+  useEffect(() => {
+    fetch("/api/signatures/plan") // Assuming an endpoint to get user plan
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.plan) setUserPlan(data.plan);
+      })
+      .catch(console.error);
+  }, []);
 
   const handleSave = async () => {
     if (!name) return;
@@ -37,12 +49,14 @@ export function SaveExportStep({ data, template, onBack, onSaveSuccess }: SaveEx
           name,
           templateId: template,
           signatureData: data,
-          trackingEnabled: false,
+          trackingEnabled: userPlan === "premium",
         }),
       });
 
       if (response.ok) {
+        const result = await response.json();
         setSaved(true);
+        setSavedSignatureId(result.signature._id);
         if (onSaveSuccess) {
           onSaveSuccess();
         }
@@ -111,7 +125,11 @@ export function SaveExportStep({ data, template, onBack, onSaveSuccess }: SaveEx
 
             <div className="pt-4 border-t">
               <h3 className="font-semibold mb-4">Export Options</h3>
-              <ActionButtons previewRef={previewRef} />
+              <ActionButtons 
+                previewRef={previewRef} 
+                signatureId={savedSignatureId || undefined}
+                enableTracking={userPlan === "premium" && !!savedSignatureId}
+              />
             </div>
           </div>
 

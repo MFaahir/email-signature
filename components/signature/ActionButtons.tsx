@@ -8,12 +8,15 @@ import { RefObject, useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { InstallGuideModal } from "./InstallGuideModal";
 import { type EmailClient } from "@/lib/email-client-guides";
+import { injectTracking } from "@/lib/tracking/html-injector";
 
 interface ActionButtonsProps {
   previewRef: RefObject<HTMLDivElement | null>;
+  signatureId?: string;
+  enableTracking?: boolean;
 }
 
-export function ActionButtons({ previewRef }: ActionButtonsProps) {
+export function ActionButtons({ previewRef, signatureId, enableTracking = false }: ActionButtonsProps) {
   const [copying, setCopying] = useState(false);
   const [hasPaid, setHasPaid] = useState<boolean | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -73,7 +76,13 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
 
     if (previewRef.current) {
       setCopying(true);
-      const html = previewRef.current.innerHTML;
+      let html = previewRef.current.innerHTML;
+      
+      // Inject tracking if enabled and signatureId is provided
+      if (signatureId && enableTracking) {
+        html = injectTracking(html, signatureId, true);
+      }
+      
       navigator.clipboard.writeText(html).then(() => {
         setTimeout(() => setCopying(false), 2000);
       });
@@ -105,7 +114,13 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
   const handleQuickInstall = async (client: EmailClient) => {
     // First, copy the HTML to clipboard
     if (previewRef.current) {
-      const html = previewRef.current.innerHTML;
+      let html = previewRef.current.innerHTML;
+      
+      // Inject tracking if enabled and signatureId is provided
+      if (signatureId && enableTracking) {
+        html = injectTracking(html, signatureId, true);
+      }
+      
       try {
         await navigator.clipboard.writeText(html);
         
