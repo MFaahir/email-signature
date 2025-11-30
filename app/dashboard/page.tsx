@@ -64,25 +64,7 @@ export default function DashboardPage() {
   );
 }
 
-// Analytics Tab Component
-function AnalyticsTab() {
-  return (
-    <div className="text-center py-12">
-      <div className="w-20 h-20 bg-sage-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-        <BarChart3 className="w-10 h-10 text-sage-600" />
-      </div>
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">Analytics Dashboard</h3>
-      <p className="text-gray-600 mb-6">
-        Track email opens, link clicks, and engagement metrics.
-      </p>
-      <div className="inline-flex items-center gap-2 px-4 py-2 bg-sage-100 text-sage-800 rounded-full text-sm font-medium">
-        <span>Coming Soon</span>
-        <span>·</span>
-        <span>Premium Feature</span>
-      </div>
-    </div>
-  );
-}
+
 
 // Settings Tab Component
 function SettingsTab() {
