@@ -55,9 +55,9 @@ export function TemplateSelector({ selectedTemplate, onSelect, onNext }: Templat
                 <Check className="w-3 h-3 text-white" />
               </div>
             )}
-            <div className="aspect-[4/3] bg-gray-100 rounded-lg mb-3 overflow-hidden relative group-hover:shadow-sm transition-all">
+            <div className="aspect-[4/3] bg-gray-50 rounded-lg mb-3 overflow-hidden relative group-hover:shadow-md transition-all border border-gray-100">
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="transform scale-[0.25] origin-center w-[600px] flex justify-center pointer-events-none select-none">
+                <div className="transform scale-[0.45] origin-center w-[600px] flex justify-center pointer-events-none select-none">
                   <SignaturePreview data={dummyData} template={template.id} />
                 </div>
               </div>
