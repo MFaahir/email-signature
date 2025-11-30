@@ -14,9 +14,10 @@ interface ActionButtonsProps {
   previewRef: RefObject<HTMLDivElement | null>;
   signatureId?: string;
   enableTracking?: boolean;
+  userPlan?: string;
 }
 
-export function ActionButtons({ previewRef, signatureId, enableTracking = false }: ActionButtonsProps) {
+export function ActionButtons({ previewRef, signatureId, enableTracking = false, userPlan = "free" }: ActionButtonsProps) {
   const [copying, setCopying] = useState(false);
   const [hasPaid, setHasPaid] = useState<boolean | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -69,7 +70,12 @@ export function ActionButtons({ previewRef, signatureId, enableTracking = false 
   };
 
   const handleCopyHtml = () => {
-    if (!hasPaid) {
+    // Allow copy if user has paid OR is on a valid plan (free/premium)
+    // The paywall should only show if we want to gate specific features, 
+    // but basic copy should be allowed for free users as per "3 signatures" limit
+    const canCopy = hasPaid || userPlan === "free" || userPlan === "premium" || userPlan === "lifetime";
+
+    if (!canCopy) {
       setShowPaywall(true);
       return;
     }
@@ -90,7 +96,10 @@ export function ActionButtons({ previewRef, signatureId, enableTracking = false 
   };
 
   const handleDownloadPdf = async () => {
-    if (!hasPaid) {
+    // Allow download if user has paid OR is on a valid plan
+    const canDownload = hasPaid || userPlan === "free" || userPlan === "premium" || userPlan === "lifetime";
+
+    if (!canDownload) {
       setShowPaywall(true);
       return;
     }
@@ -160,13 +169,13 @@ export function ActionButtons({ previewRef, signatureId, enableTracking = false 
         {/* Export Buttons */}
         <div className="flex gap-4">
           <Button onClick={handleCopyHtml} variant="outline" className="flex-1">
-            {!hasPaid && <Lock className="w-4 h-4 mr-2" />}
-            {hasPaid && <Copy className="w-4 h-4 mr-2" />}
+            {!(hasPaid || userPlan === "free" || userPlan === "premium" || userPlan === "lifetime") && <Lock className="w-4 h-4 mr-2" />}
+            {(hasPaid || userPlan === "free" || userPlan === "premium" || userPlan === "lifetime") && <Copy className="w-4 h-4 mr-2" />}
             {copying ? "Copied!" : "Copy HTML"}
           </Button>
           <Button onClick={handleDownloadPdf} className="flex-1">
-            {!hasPaid && <Lock className="w-4 h-4 mr-2" />}
-            {hasPaid && <Download className="w-4 h-4 mr-2" />}
+            {!(hasPaid || userPlan === "free" || userPlan === "premium" || userPlan === "lifetime") && <Lock className="w-4 h-4 mr-2" />}
+            {(hasPaid || userPlan === "free" || userPlan === "premium" || userPlan === "lifetime") && <Download className="w-4 h-4 mr-2" />}
             Download PDF
           </Button>
         </div>

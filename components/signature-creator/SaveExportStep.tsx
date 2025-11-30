@@ -129,6 +129,7 @@ export function SaveExportStep({ data, template, onBack, onSaveSuccess }: SaveEx
                 previewRef={previewRef} 
                 signatureId={savedSignatureId || undefined}
                 enableTracking={userPlan === "premium" && !!savedSignatureId}
+                userPlan={userPlan}
               />
             </div>
           </div>
