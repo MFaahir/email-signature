@@ -46,42 +46,59 @@ export async function GET() {
 
 // POST - Create a new signature
 export async function POST(request: Request) {
+  console.log("POST /api/signatures called");
   try {
     const { userId } = await auth();
+    console.log("Auth userId:", userId);
 
     if (!userId) {
+      console.log("Unauthorized: No userId");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    console.log("Connecting to DB...");
     await connectDB();
+    console.log("DB Connected");
 
     // Get user
     let user = await User.findOne({ clerkId: userId });
+    console.log("User found in DB:", user ? "Yes" : "No");
     
     // If user doesn't exist, create them (fallback for webhook issues)
     if (!user) {
-      const { currentUser: getClerkUser } = await import("@clerk/nextjs/server");
-      const clerkUser = await getClerkUser();
-      
-      if (clerkUser) {
-        user = await User.create({
-          clerkId: userId,
-          email: clerkUser.emailAddresses[0]?.emailAddress || "",
-          firstName: clerkUser.firstName || "",
-          lastName: clerkUser.lastName || "",
-          plan: "free",
-          signatureLimit: 3,
-        });
-        console.log(`Auto-created user: ${userId}`);
-      } else {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      console.log("User not found, attempting to auto-create...");
+      try {
+        const { currentUser: getClerkUser } = await import("@clerk/nextjs/server");
+        const clerkUser = await getClerkUser();
+        
+        if (clerkUser) {
+          console.log("Clerk user fetched:", clerkUser.id);
+          user = await User.create({
+            clerkId: userId,
+            email: clerkUser.emailAddresses[0]?.emailAddress || "",
+            firstName: clerkUser.firstName || "",
+            lastName: clerkUser.lastName || "",
+            plan: "free",
+            signatureLimit: 3,
+          });
+          console.log(`Auto-created user: ${userId}`);
+        } else {
+          console.error("Failed to fetch Clerk user details");
+          return NextResponse.json({ error: "User not found and failed to fetch details" }, { status: 404 });
+        }
+      } catch (userCreateError) {
+        console.error("Error auto-creating user:", userCreateError);
+        return NextResponse.json({ error: "Failed to create user record" }, { status: 500 });
       }
     }
 
     // Check signature limit for free users
     if (user.plan === "free") {
       const signatureCount = await Signature.countDocuments({ userId: user._id });
+      console.log("Current signature count:", signatureCount);
+      
       if (signatureCount >= user.signatureLimit) {
+        console.log("Signature limit reached");
         return NextResponse.json(
           {
             error: "Signature limit reached",
@@ -96,9 +113,11 @@ export async function POST(request: Request) {
     // Parse request body
     const body = await request.json();
     const { name, templateId, signatureData, trackingEnabled } = body;
+    console.log("Request body parsed. Name:", name, "Template:", templateId);
 
     // Validate required fields
     if (!name || !templateId || !signatureData) {
+      console.log("Missing required fields");
       return NextResponse.json(
         { error: "Missing required fields: name, templateId, signatureData" },
         { status: 400 }
@@ -107,6 +126,7 @@ export async function POST(request: Request) {
 
     // Only premium users can enable tracking
     const canEnableTracking = user.plan === "premium" || user.plan === "lifetime";
+    console.log("Can enable tracking:", canEnableTracking, "Requested:", trackingEnabled);
     
     // Create signature
     const signature = await Signature.create({
@@ -117,14 +137,20 @@ export async function POST(request: Request) {
       trackingEnabled: canEnableTracking ? trackingEnabled : false,
     });
 
+    console.log("Signature created successfully:", signature._id);
+
     return NextResponse.json({
       signature,
       message: "Signature created successfully",
     }, { status: 201 });
   } catch (error) {
     console.error("Error creating signature:", error);
+    // Log full error object if possible
+    if (error instanceof Error) {
+      console.error("Stack:", error.stack);
+    }
     return NextResponse.json(
-      { error: "Failed to create signature" },
+      { error: "Failed to create signature", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
