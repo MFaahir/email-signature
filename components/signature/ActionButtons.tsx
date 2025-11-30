@@ -274,20 +274,20 @@ export function ActionButtons({ previewRef, signatureId, enableTracking = false,
                 <Lock className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                Unlock Export Features
+                Upgrade to Premium
               </h3>
               <p className="text-gray-600">
-                Pay once, export unlimited signatures forever
+                Unlock unlimited signatures and advanced analytics
               </p>
             </div>
 
             <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
               <div className="flex items-baseline justify-center mb-2">
                 <span className="text-5xl font-bold text-gray-900">$4.99</span>
-                <span className="text-gray-600 ml-2">one-time</span>
+                <span className="text-gray-600 ml-2">/month</span>
               </div>
               <p className="text-center text-sm text-gray-600">
-                Lifetime access • No recurring fees
+                Cancel anytime • No commitment
               </p>
             </div>
 
@@ -297,7 +297,7 @@ export function ActionButtons({ previewRef, signatureId, enableTracking = false,
               className="w-full h-12 text-lg mb-4"
               size="lg"
             >
-              {loading ? "Redirecting..." : "Pay $4.99 & Unlock"}
+              {loading ? "Redirecting..." : "Start Premium Subscription"}
             </Button>
 
             <p className="text-xs text-center text-gray-500">

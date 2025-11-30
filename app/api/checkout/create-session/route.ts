@@ -53,20 +53,24 @@ export async function POST(request: Request) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: "Email Signature Generator - Lifetime Access",
-              description: "One-time payment for lifetime access to create professional email signatures",
+              name: "Email Signature Generator - Premium Plan",
+              description: "Monthly subscription for unlimited signatures and analytics",
             },
             unit_amount: 499, // $4.99 in cents
+            recurring: {
+              interval: "month",
+            },
           },
           quantity: 1,
         },
       ],
-      mode: "payment",
+      mode: "subscription",
       success_url: `${request.headers.get("origin")}/generator?success=true`,
       cancel_url: `${request.headers.get("origin")}/generator?canceled=true`,
       metadata: {
         userId: user._id.toString(),
         clerkId: userId,
+        plan: "premium",
       },
     });
 
