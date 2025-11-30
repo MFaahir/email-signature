@@ -3,6 +3,8 @@
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { SignatureList } from "@/components/dashboard/SignatureList";
 import { useState } from "react";
+import { AnalyticsTab } from "@/components/dashboard/AnalyticsTab";
+import { Button } from "@/components/ui/button";
 import { BarChart3, FileSignature, Settings, CreditCard } from "lucide-react";
 
 export default function DashboardPage() {
