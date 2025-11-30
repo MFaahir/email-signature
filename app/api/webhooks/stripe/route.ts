@@ -42,15 +42,18 @@ export async function POST(request: Request) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        const { userId } = session.metadata || {};
+        const { clerkId } = session.metadata || {};
 
         if (session.mode === "subscription") {
           // Subscription checkout
-          if (!userId) break;
+          if (!clerkId) {
+            console.error("No clerkId in session metadata");
+            break;
+          }
 
           const subscriptionId = session.subscription as string;
           await User.updateOne(
-            { clerkId: userId },
+            { clerkId: clerkId },
             { 
               stripeSubscriptionId: subscriptionId,
               stripeCustomerId: session.customer as string,
@@ -58,21 +61,23 @@ export async function POST(request: Request) {
               subscriptionStatus: "active"
             }
           );
+          console.log(`User ${clerkId} upgraded to premium via subscription`);
         } else {
           // One-time payment (legacy support)
-          if (!userId) break;
+          if (!clerkId) break;
           
           await User.updateOne(
-            { clerkId: userId },
+            { clerkId: clerkId },
             { hasPaid: true }
           );
           
           await Payment.create({
-            userId,
+            userId: clerkId, // Storing clerkId as userId in Payment model for consistency
             stripePaymentId: session.payment_intent as string,
             amount: session.amount_total || 499,
             status: "completed",
           });
+          console.log(`User ${clerkId} paid one-time fee`);
         }
         break;
       }
