@@ -3,9 +3,11 @@
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { Copy, Download, Lock } from "lucide-react";
+import { Copy, Download, Lock, BookOpen } from "lucide-react";
 import { RefObject, useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
+import { InstallGuideModal } from "./InstallGuideModal";
+import { type EmailClient } from "@/lib/email-client-guides";
 
 interface ActionButtonsProps {
   previewRef: RefObject<HTMLDivElement | null>;
@@ -16,6 +18,8 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
   const [hasPaid, setHasPaid] = useState<boolean | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<EmailClient | null>(null);
   const { user } = useUser();
 
   useEffect(() => {
@@ -98,20 +102,100 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
     }
   };
 
+  const openGuide = (client: EmailClient) => {
+    setSelectedClient(client);
+    setShowGuide(true);
+  };
+
   return (
     <>
-      <div className="flex gap-4 mt-4">
-        <Button onClick={handleCopyHtml} variant="outline" className="flex-1">
-          {!hasPaid && <Lock className="w-4 h-4 mr-2" />}
-          {hasPaid && <Copy className="w-4 h-4 mr-2" />}
-          {copying ? "Copied!" : "Copy HTML"}
-        </Button>
-        <Button onClick={handleDownloadPdf} className="flex-1">
-          {!hasPaid && <Lock className="w-4 h-4 mr-2" />}
-          {hasPaid && <Download className="w-4 h-4 mr-2" />}
-          Download PDF
-        </Button>
+      <div className="space-y-4 mt-4">
+        {/* Export Buttons */}
+        <div className="flex gap-4">
+          <Button onClick={handleCopyHtml} variant="outline" className="flex-1">
+            {!hasPaid && <Lock className="w-4 h-4 mr-2" />}
+            {hasPaid && <Copy className="w-4 h-4 mr-2" />}
+            {copying ? "Copied!" : "Copy HTML"}
+          </Button>
+          <Button onClick={handleDownloadPdf} className="flex-1">
+            {!hasPaid && <Lock className="w-4 h-4 mr-2" />}
+            {hasPaid && <Download className="w-4 h-4 mr-2" />}
+            Download PDF
+          </Button>
+        </div>
+
+        {/* Installation Guides */}
+        <div className="border-t pt-4">
+          <div className="flex items-center gap-2 mb-3">
+            <BookOpen className="w-4 h-4 text-gray-600" />
+            <h4 className="font-semibold text-sm text-gray-700">Install in Email Client</h4>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => openGuide("gmail")}
+              className="justify-start"
+            >
+              <span className="mr-2">📧</span>
+              Gmail
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => openGuide("outlookWeb")}
+              className="justify-start"
+            >
+              <span className="mr-2">🌐</span>
+              Outlook Web
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => openGuide("outlook")}
+              className="justify-start"
+            >
+              <span className="mr-2">📨</span>
+              Outlook Desktop
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => openGuide("appleMail")}
+              className="justify-start"
+            >
+              <span className="mr-2">✉️</span>
+              Apple Mail
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => openGuide("ios")}
+              className="justify-start"
+            >
+              <span className="mr-2">📱</span>
+              iPhone/iPad
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => openGuide("android")}
+              className="justify-start"
+            >
+              <span className="mr-2">🤖</span>
+              Android
+            </Button>
+          </div>
+        </div>
       </div>
+
+      {/* Installation Guide Modal */}
+      <InstallGuideModal
+        isOpen={showGuide}
+        onClose={() => setShowGuide(false)}
+        client={selectedClient}
+      />
 
       {/* Paywall Modal */}
       {showPaywall && (
@@ -164,4 +248,3 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
     </>
   );
 }
-
