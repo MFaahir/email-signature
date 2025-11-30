@@ -102,9 +102,41 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
     }
   };
 
-  const openGuide = (client: EmailClient) => {
-    setSelectedClient(client);
-    setShowGuide(true);
+  const handleQuickInstall = async (client: EmailClient) => {
+    // First, copy the HTML to clipboard
+    if (previewRef.current) {
+      const html = previewRef.current.innerHTML;
+      try {
+        await navigator.clipboard.writeText(html);
+        
+        // Show brief success message
+        setCopying(true);
+        setTimeout(() => setCopying(false), 2000);
+        
+        // Then navigate to the appropriate settings page
+        const urls: Record<EmailClient, string> = {
+          gmail: 'https://mail.google.com/mail/u/0/#settings/general',
+          outlookWeb: 'https://outlook.live.com/mail/0/options/mail/messageContent',
+          outlook: '', // Desktop app - show guide instead
+          appleMail: '', // Desktop app - show guide instead
+          ios: '', // Mobile - show guide instead
+          android: '', // Mobile - show guide instead
+        };
+        
+        const url = urls[client];
+        
+        if (url) {
+          // Open settings page in new tab
+          window.open(url, '_blank');
+        } else {
+          // For desktop/mobile apps, show the guide
+          setSelectedClient(client);
+          setShowGuide(true);
+        }
+      } catch (error) {
+        console.error('Error copying to clipboard:', error);
+      }
+    }
   };
 
   return (
@@ -124,18 +156,19 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
           </Button>
         </div>
 
-        {/* Installation Guides */}
+        {/* Quick Install Buttons */}
         <div className="border-t pt-4">
           <div className="flex items-center gap-2 mb-3">
             <BookOpen className="w-4 h-4 text-gray-600" />
-            <h4 className="font-semibold text-sm text-gray-700">Install in Email Client</h4>
+            <h4 className="font-semibold text-sm text-gray-700">Quick Install</h4>
+            <span className="text-xs text-gray-500">(Auto-copy & navigate)</span>
           </div>
           
           <div className="grid grid-cols-2 gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => openGuide("gmail")}
+              onClick={() => handleQuickInstall("gmail")}
               className="justify-start"
             >
               <span className="mr-2">📧</span>
@@ -144,7 +177,7 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => openGuide("outlookWeb")}
+              onClick={() => handleQuickInstall("outlookWeb")}
               className="justify-start"
             >
               <span className="mr-2">🌐</span>
@@ -153,7 +186,7 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => openGuide("outlook")}
+              onClick={() => handleQuickInstall("outlook")}
               className="justify-start"
             >
               <span className="mr-2">📨</span>
@@ -162,7 +195,7 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => openGuide("appleMail")}
+              onClick={() => handleQuickInstall("appleMail")}
               className="justify-start"
             >
               <span className="mr-2">✉️</span>
@@ -171,7 +204,7 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => openGuide("ios")}
+              onClick={() => handleQuickInstall("ios")}
               className="justify-start"
             >
               <span className="mr-2">📱</span>
@@ -180,13 +213,17 @@ export function ActionButtons({ previewRef }: ActionButtonsProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => openGuide("android")}
+              onClick={() => handleQuickInstall("android")}
               className="justify-start"
             >
               <span className="mr-2">🤖</span>
               Android
             </Button>
           </div>
+          
+          <p className="text-xs text-gray-500 mt-2 text-center">
+            Click to copy signature & open settings page
+          </p>
         </div>
       </div>
 
