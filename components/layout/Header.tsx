@@ -17,6 +17,9 @@ export function Header() {
           </SignInButton>
         </SignedOut>
         <SignedIn>
+          <Link href="/dashboard">
+            <Button variant="ghost">Dashboard</Button>
+          </Link>
           <Link href="/generator">
             <Button variant="ghost">Generator</Button>
           </Link>
