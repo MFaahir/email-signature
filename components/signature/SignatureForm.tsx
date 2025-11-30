@@ -13,21 +13,10 @@ interface SignatureFormProps {
 export function SignatureForm({ data, onChange }: SignatureFormProps) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name.startsWith("social-")) {
-      const socialKey = name.replace("social-", "") as keyof typeof data.socialLinks;
-      onChange({
-        ...data,
-        socialLinks: {
-          ...data.socialLinks,
-          [socialKey]: value,
-        },
-      });
-    } else {
-      onChange({
-        ...data,
-        [name]: value,
-      });
-    }
+    onChange({
+      ...data,
+      [name]: value,
+    });
   };
 
   const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -50,21 +39,21 @@ export function SignatureForm({ data, onChange }: SignatureFormProps) {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="fullName">Full Name</Label>
+          <Label htmlFor="name">Full Name</Label>
           <Input
-            id="fullName"
-            name="fullName"
-            value={data.fullName}
+            id="name"
+            name="name"
+            value={data.name}
             onChange={handleChange}
             placeholder="Jane Doe"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="jobTitle">Job Title</Label>
+          <Label htmlFor="title">Job Title</Label>
           <Input
-            id="jobTitle"
-            name="jobTitle"
-            value={data.jobTitle}
+            id="title"
+            name="title"
+            value={data.title}
             onChange={handleChange}
             placeholder="Software Engineer"
           />
@@ -118,22 +107,22 @@ export function SignatureForm({ data, onChange }: SignatureFormProps) {
         <Label>Social Media</Label>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Input
-            name="social-linkedin"
-            value={data.socialLinks.linkedin}
+            name="linkedin"
+            value={data.linkedin}
             onChange={handleChange}
             placeholder="LinkedIn URL"
           />
           <Input
-            name="social-twitter"
-            value={data.socialLinks.twitter}
+            name="twitter"
+            value={data.twitter}
             onChange={handleChange}
             placeholder="Twitter URL"
           />
           <Input
-            name="social-instagram"
-            value={data.socialLinks.instagram}
+            name="github"
+            value={data.github}
             onChange={handleChange}
-            placeholder="Instagram URL"
+            placeholder="GitHub URL"
           />
         </div>
       </div>
@@ -149,19 +138,19 @@ export function SignatureForm({ data, onChange }: SignatureFormProps) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="color">Accent Color</Label>
+          <Label htmlFor="accentColor">Accent Color</Label>
           <div className="flex items-center gap-2">
             <Input
-              id="color"
-              name="color"
+              id="accentColor"
+              name="accentColor"
               type="color"
-              value={data.color}
+              value={data.accentColor}
               onChange={handleChange}
               className="w-12 h-10 p-1 cursor-pointer"
             />
             <Input
-              name="color"
-              value={data.color}
+              name="accentColor"
+              value={data.accentColor}
               onChange={handleChange}
               placeholder="#000000"
               className="flex-1"

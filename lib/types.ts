@@ -1,31 +1,36 @@
 export interface SignatureData {
-  fullName: string;
-  jobTitle: string;
+  name: string;
+  title: string;
   company: string;
   website: string;
   email: string;
   phone: string;
-  socialLinks: {
+  linkedin: string;
+  twitter: string;
+  github: string;
+  logo: string;
+  accentColor: string;
+  // Legacy fields for backward compatibility
+  fullName?: string;
+  jobTitle?: string;
+  color?: string;
+  socialLinks?: {
     linkedin: string;
     twitter: string;
     instagram: string;
   };
-  logo: string;
-  color: string;
 }
 
 export const initialSignatureData: SignatureData = {
-  fullName: "Jane Doe",
-  jobTitle: "Software Engineer",
+  name: "Jane Doe",
+  title: "Software Engineer",
   company: "Acme Corp",
   website: "https://example.com",
   email: "jane@example.com",
   phone: "+1 (555) 123-4567",
-  socialLinks: {
-    linkedin: "",
-    twitter: "",
-    instagram: "",
-  },
+  linkedin: "",
+  twitter: "",
+  github: "",
   logo: "",
-  color: "#2563eb", // blue-600
+  accentColor: "#2563eb", // blue-600
 };

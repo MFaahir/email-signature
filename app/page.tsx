@@ -43,7 +43,7 @@ export default function Home() {
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 mt-12">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-600" />
-              <span>3 Premium Templates</span>
+              <span>12 Premium Templates</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-600" />
@@ -106,9 +106,9 @@ export default function Home() {
               <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mb-4">
                 <Palette className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3">Beautiful Templates</h3>
+              <h3 className="text-xl font-bold mb-3">12 Beautiful Templates</h3>
               <p className="text-gray-700 leading-relaxed">
-                3 professionally designed templates that work perfectly across Gmail, Outlook, Apple Mail, and more.
+                Choose from 12 professionally designed templates including Corporate, Creative, Modern Gradient, and more. Perfect across all email clients.
               </p>
             </div>
 
@@ -157,7 +157,7 @@ export default function Home() {
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700">All 3 premium templates</span>
+                <span className="text-gray-700">All 12 premium templates</span>
               </div>
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
