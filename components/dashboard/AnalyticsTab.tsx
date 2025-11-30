@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BarChart, Activity, MousePointer, Eye, Lock } from "lucide-react";
+import { Activity, MousePointer, Eye, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
@@ -118,6 +118,10 @@ export function AnalyticsTab() {
     );
   }
 
+  const maxViews = data?.recentActivity && data.recentActivity.length > 0
+    ? Math.max(...data.recentActivity.map(d => d.views))
+    : 1;
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -168,7 +172,7 @@ export function AnalyticsTab() {
                   <div className="w-full bg-cream-100 rounded-t-sm relative h-full flex items-end">
                     <div 
                       className="w-full bg-sage-500/80 hover:bg-sage-600 transition-colors rounded-t-sm"
-                      style={{ height: `${Math.max((day.views / (Math.max(...data.recentActivity.map(d => d.views)) || 1)) * 100, 4)}%` }}
+                      style={{ height: `${Math.max((day.views / maxViews) * 100, 4)}%` }}
                     ></div>
                   </div>
                   <span className="text-[10px] text-gray-400 rotate-45 origin-left translate-y-2 opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-0 left-1/2">
