@@ -2,8 +2,10 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { SignatureData } from "@/lib/types";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
+import { Sparkles, Loader2 } from "lucide-react";
 
 interface SignatureFormProps {
   data: SignatureData;
@@ -11,6 +13,9 @@ interface SignatureFormProps {
 }
 
 export function SignatureForm({ data, onChange }: SignatureFormProps) {
+  const [isDetecting, setIsDetecting] = useState(false);
+  const [detectError, setDetectError] = useState<string | null>(null);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     onChange({
@@ -33,9 +38,77 @@ export function SignatureForm({ data, onChange }: SignatureFormProps) {
     }
   };
 
+  const handleAutoFill = async () => {
+    if (!data.website) {
+      setDetectError("Please enter a website URL first");
+      return;
+    }
+
+    setIsDetecting(true);
+    setDetectError(null);
+
+    try {
+      const response = await fetch('/api/brand-detect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: data.website }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to detect brand information');
+      }
+
+      const brandInfo = await response.json();
+
+      // Update form with detected information
+      onChange({
+        ...data,
+        company: brandInfo.companyName || data.company,
+        logo: brandInfo.logo || brandInfo.favicon || data.logo,
+        accentColor: brandInfo.brandColors?.[0] || data.accentColor,
+        linkedin: brandInfo.socialLinks?.linkedin || data.linkedin,
+        twitter: brandInfo.socialLinks?.twitter || data.twitter,
+        github: brandInfo.socialLinks?.github || data.github,
+      });
+    } catch (error) {
+      console.error('Error detecting brand:', error);
+      setDetectError('Failed to detect brand information. Please try again.');
+    } finally {
+      setIsDetecting(false);
+    }
+  };
+
   return (
     <div className="space-y-4 p-4 border rounded-lg bg-white shadow-sm">
-      <h2 className="text-xl font-semibold mb-4">Enter Your Details</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">Enter Your Details</h2>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleAutoFill}
+          disabled={isDetecting || !data.website}
+          className="gap-2"
+        >
+          {isDetecting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Detecting...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4" />
+              Auto-fill from website
+            </>
+          )}
+        </Button>
+      </div>
+
+      {detectError && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+          {detectError}
+        </div>
+      )}
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
