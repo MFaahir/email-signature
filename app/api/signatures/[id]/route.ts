@@ -7,7 +7,7 @@ import Signature from "@/models/Signature";
 // GET - Get a specific signature
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -23,8 +23,10 @@ export async function GET(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    const { id } = await params;
+
     const signature = await Signature.findOne({
-      _id: params.id,
+      _id: id,
       userId: user._id,
     });
 
@@ -45,7 +47,7 @@ export async function GET(
 // PUT - Update a signature
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -61,6 +63,7 @@ export async function PUT(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     const { name, templateId, signatureData, trackingEnabled } = body;
 
@@ -68,7 +71,7 @@ export async function PUT(
     const canEnableTracking = user.plan === "premium" || user.plan === "lifetime";
 
     const signature = await Signature.findOneAndUpdate(
-      { _id: params.id, userId: user._id },
+      { _id: id, userId: user._id },
       {
         ...(name && { name }),
         ...(templateId && { templateId }),
@@ -100,7 +103,7 @@ export async function PUT(
 // DELETE - Delete a signature
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -116,8 +119,10 @@ export async function DELETE(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    const { id } = await params;
+
     const signature = await Signature.findOneAndDelete({
-      _id: params.id,
+      _id: id,
       userId: user._id,
     });
 
