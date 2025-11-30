@@ -29,7 +29,7 @@ export function SaveExportStep({ data, template, onBack, onSaveSuccess }: SaveEx
 
   // Fetch user plan on mount
   useEffect(() => {
-    fetch("/api/signatures/plan") // Assuming an endpoint to get user plan
+    fetch("/api/signatures")
       .then((res) => res.json())
       .then((data) => {
         if (data.plan) setUserPlan(data.plan);
