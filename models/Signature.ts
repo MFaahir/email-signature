@@ -29,6 +29,17 @@ const SignatureSchema = new mongoose.Schema(
       github: String,
       logo: String,
       accentColor: String,
+      // Legacy fields
+      fullName: String,
+      jobTitle: String,
+      color: String,
+      socialLinks: {
+        linkedin: String,
+        twitter: String,
+        instagram: String,
+        facebook: String,
+        youtube: String,
+      },
     },
     trackingEnabled: {
       type: Boolean,
