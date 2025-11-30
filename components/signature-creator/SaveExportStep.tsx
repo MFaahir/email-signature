@@ -15,9 +15,10 @@ interface SaveExportStepProps {
   data: SignatureData;
   template: string;
   onBack: () => void;
+  onSaveSuccess?: () => void;
 }
 
-export function SaveExportStep({ data, template, onBack }: SaveExportStepProps) {
+export function SaveExportStep({ data, template, onBack, onSaveSuccess }: SaveExportStepProps) {
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -42,6 +43,9 @@ export function SaveExportStep({ data, template, onBack }: SaveExportStepProps) 
 
       if (response.ok) {
         setSaved(true);
+        if (onSaveSuccess) {
+          onSaveSuccess();
+        }
         // Refresh dashboard data if we navigate there later
         router.refresh();
       } else {

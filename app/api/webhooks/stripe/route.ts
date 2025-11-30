@@ -42,49 +42,76 @@ export async function POST(request: Request) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        const { userId, clerkId } = session.metadata || {};
+        const { userId } = session.metadata || {};
 
-        if (!userId || !clerkId) {
-          console.error("Missing metadata in checkout session");
-          break;
+        if (session.mode === "subscription") {
+          // Subscription checkout
+          if (!userId) break;
+
+          const subscriptionId = session.subscription as string;
+          await User.updateOne(
+            { clerkId: userId },
+            { 
+              stripeSubscriptionId: subscriptionId,
+              stripeCustomerId: session.customer as string,
+              plan: "premium",
+              subscriptionStatus: "active"
+            }
+          );
+        } else {
+          // One-time payment (legacy support)
+          if (!userId) break;
+          
+          await User.updateOne(
+            { clerkId: userId },
+            { hasPaid: true }
+          );
+          
+          await Payment.create({
+            userId,
+            stripePaymentId: session.payment_intent as string,
+            amount: session.amount_total || 499,
+            status: "completed",
+          });
         }
-
-        // Update user's payment status
-        const user = await User.findById(userId);
-        if (user) {
-          user.hasPaid = true;
-          await user.save();
-        }
-
-        // Create payment record
-        await Payment.create({
-          userId,
-          clerkId,
-          stripePaymentId: session.payment_intent as string,
-          amount: 499,
-          status: "completed",
-        });
-
-        console.log(`Payment completed for user ${clerkId}`);
         break;
       }
 
-      case "payment_intent.succeeded": {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.log(`PaymentIntent succeeded: ${paymentIntent.id}`);
+      case "customer.subscription.created":
+      case "customer.subscription.updated": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const status = subscription.status;
+        const customerId = subscription.customer as string;
+
+        // Map Stripe status to our status
+        const isActive = status === "active" || status === "trialing";
+        const plan = isActive ? "premium" : "free";
+
+        await User.updateOne(
+          { stripeCustomerId: customerId },
+          { 
+            subscriptionStatus: status,
+            plan: plan,
+            stripeSubscriptionId: subscription.id
+          }
+        );
         break;
       }
 
-      case "payment_intent.payment_failed": {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.log(`PaymentIntent failed: ${paymentIntent.id}`);
-        
-        // You could update payment status to failed here if needed
+      case "customer.subscription.deleted": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const customerId = subscription.customer as string;
+
+        await User.updateOne(
+          { stripeCustomerId: customerId },
+          { 
+            subscriptionStatus: "canceled",
+            plan: "free",
+            stripeSubscriptionId: null
+          }
+        );
         break;
       }
-
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
     }
 
     return NextResponse.json({ received: true });

@@ -6,6 +6,7 @@ import { TemplateSelector } from "./TemplateSelector";
 import { AutoFillStep } from "./AutoFillStep";
 import { PersonalDetailsStep } from "./PersonalDetailsStep";
 import { SaveExportStep } from "./SaveExportStep";
+import { AnalyticsUpsellModal } from "@/components/upsell/AnalyticsUpsellModal";
 import { SignatureData, initialSignatureData } from "@/lib/types";
 
 export function SignatureCreator() {
@@ -13,8 +14,14 @@ export function SignatureCreator() {
   const [template, setTemplate] = useState("simple");
   const [data, setData] = useState<SignatureData>(initialSignatureData);
 
+  const [showUpsell, setShowUpsell] = useState(false);
+
   const nextStep = () => setStep((s) => s + 1);
   const prevStep = () => setStep((s) => s - 1);
+
+  const handleSaveSuccess = () => {
+    setShowUpsell(true);
+  };
 
   const handleAutoFill = async (url: string) => {
     try {
@@ -48,13 +55,15 @@ export function SignatureCreator() {
     { id: 1, component: TemplateSelector, props: { selectedTemplate: template, onSelect: setTemplate, onNext: nextStep } },
     { id: 2, component: AutoFillStep, props: { onAutoFill: handleAutoFill, onSkip: nextStep } },
     { id: 3, component: PersonalDetailsStep, props: { data, template, onChange: setData, onNext: nextStep, onBack: prevStep } },
-    { id: 4, component: SaveExportStep, props: { data, template, onBack: prevStep } },
+    { id: 4, component: SaveExportStep, props: { data, template, onBack: prevStep, onSaveSuccess: handleSaveSuccess } },
   ];
 
   const CurrentStep = steps[step - 1].component;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      <AnalyticsUpsellModal open={showUpsell} onOpenChange={setShowUpsell} />
+      
       {/* Progress Bar */}
       <div className="mb-8">
         <div className="flex justify-between text-sm font-medium text-gray-500 mb-2">

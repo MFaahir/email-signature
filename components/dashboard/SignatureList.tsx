@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
+import { AnalyticsUpsellModal } from "@/components/upsell/AnalyticsUpsellModal";
 
 interface Signature {
   _id: string;
@@ -76,11 +77,19 @@ export function SignatureList() {
     }
   };
 
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  const handleCreateNew = (e: React.MouseEvent) => {
+    if (plan === "free" && signatures.length >= limit) {
+      e.preventDefault();
+      setShowUpgradeModal(true);
+    }
+  };
+
   const handleDuplicate = async (signature: Signature) => {
     // Check limit first
     if (plan === "free" && signatures.length >= limit) {
-      // TODO: Show upgrade modal
-      alert("Signature limit reached. Upgrade to premium for unlimited signatures.");
+      setShowUpgradeModal(true);
       return;
     }
 
@@ -122,6 +131,8 @@ export function SignatureList() {
 
   return (
     <div className="space-y-6">
+      <AnalyticsUpsellModal open={showUpgradeModal} onOpenChange={setShowUpgradeModal} />
+      
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">My Signatures</h2>
@@ -129,7 +140,7 @@ export function SignatureList() {
             {signatures.length} / {plan === "free" ? limit : "∞"} signatures used
           </p>
         </div>
-        <Button asChild disabled={plan === "free" && signatures.length >= limit}>
+        <Button asChild onClick={handleCreateNew}>
           <Link href="/generator">
             <Plus className="w-4 h-4 mr-2" />
             Create New
