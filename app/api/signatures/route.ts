@@ -4,6 +4,9 @@ import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import Signature from "@/models/Signature";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 // GET - List all signatures for the current user
 export async function GET() {
   try {
