@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle, Mail, Palette, Zap, Sparkles, Clock, DollarSign } from "lucide-react";
 import Link from "next/link";
+import { TemplateGallery } from "@/components/landing/TemplateGallery";
 
 export default function Home() {
   return (
@@ -56,6 +57,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Template Gallery */}
+      <TemplateGallery />
 
       {/* How It Works */}
       <section className="py-16 md:py-20 px-6 md:px-12 lg:px-24 bg-gray-50">
