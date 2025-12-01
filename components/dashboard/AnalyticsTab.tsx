@@ -124,6 +124,35 @@ export function AnalyticsTab() {
 
   return (
     <div className="space-y-6">
+      {/* Tab Navigation */}
+      <div className="bg-white rounded-lg border border-cream-300 p-1 inline-flex gap-1 shadow-sm">
+        <button
+          onClick={() => setActiveView("overview")}
+          className={`px-6 py-2.5 rounded-md font-medium transition-all ${
+            activeView === "overview"
+              ? "bg-sage-600 text-white shadow-sm"
+              : "text-gray-600 hover:text-gray-900 hover:bg-cream-100"
+          }`}
+        >
+          Overview
+        </button>
+        <button
+          onClick={() => setActiveView("campaigns")}
+          className={`px-6 py-2.5 rounded-md font-medium transition-all ${
+            activeView === "campaigns"
+              ? "bg-sage-600 text-white shadow-sm"
+              : "text-gray-600 hover:text-gray-900 hover:bg-cream-100"
+          }`}
+        >
+          Email Tracking
+        </button>
+      </div>
+
+      {/* Content */}
+      {activeView === "campaigns" ? (
+        <TrackingCampaigns />
+      ) : (
+        <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-white border-cream-200 shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -188,6 +217,8 @@ export function AnalyticsTab() {
           )}
         </CardContent>
       </Card>
+        </>
+      )}
     </div>
   );
 }
