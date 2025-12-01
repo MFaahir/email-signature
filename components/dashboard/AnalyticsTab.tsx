@@ -34,6 +34,11 @@ export function AnalyticsTab({ initialView = "overview" }: AnalyticsTabProps) {
   const [activeView, setActiveView] = useState<"overview" | "campaigns">(initialView);
   const router = useRouter();
 
+  // Update activeView when initialView prop changes
+  useEffect(() => {
+    setActiveView(initialView);
+  }, [initialView]);
+
   useEffect(() => {
     fetchAnalytics();
   }, []);
