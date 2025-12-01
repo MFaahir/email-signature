@@ -129,12 +129,25 @@ function BillingTab() {
           </div>
         </div>
 
-        <a
-          href="/pricing"
-          className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 bg-sage-600 text-white rounded-xl hover:bg-sage-700 transition-colors font-medium shadow-sm"
+        <Button
+          onClick={async () => {
+            try {
+              const response = await fetch("/api/checkout/create-session", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({}),
+              });
+              const data = await response.json();
+              if (data.url) window.location.href = data.url;
+            } catch (error) {
+              console.error("Error starting checkout:", error);
+            }
+          }}
+          className="w-full sm:w-auto bg-sage-600 hover:bg-sage-700 text-white shadow-sm"
+          size="lg"
         >
-          Upgrade to Premium
-        </a>
+          Upgrade Now - $4.99/month
+        </Button>
       </div>
 
       <div className="bg-sage-50 border border-sage-200 rounded-xl p-6">

@@ -1,12 +1,12 @@
 import { Header } from "@/components/layout/Header";
-import { SignatureCreator } from "@/components/signature-creator/SignatureCreator";
+import { GeneratorGuard } from "@/components/signature-creator/GeneratorGuard";
 import { Suspense } from "react";
 
 function GeneratorContent() {
   return (
     <div className="min-h-screen bg-cream-200">
       <Header />
-      <SignatureCreator />
+      <GeneratorGuard />
     </div>
   );
 }
