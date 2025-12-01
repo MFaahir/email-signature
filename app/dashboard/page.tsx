@@ -1,11 +1,13 @@
+```
 "use client";
 
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { SignatureList } from "@/components/dashboard/SignatureList";
 import { useState } from "react";
 import { AnalyticsTab } from "@/components/dashboard/AnalyticsTab";
 import { Button } from "@/components/ui/button";
 import { BarChart3, FileSignature, Settings, CreditCard } from "lucide-react";
+import { UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("signatures");
@@ -20,7 +22,46 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-cream-200">
-      <DashboardHeader />
+      {/* Unified Header with Navigation */}
+      <header className="bg-white border-b border-cream-300 sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto px-4">
+          {/* Top Bar */}
+          <div className="flex items-center justify-between py-4">
+            <Link href="/" className="text-2xl font-bold text-gray-900">
+              SignatureGen
+            </Link>
+            <div className="flex items-center gap-4">
+              <Link href="/generator">
+                <Button className="bg-sage-600 hover:bg-sage-700 text-white">
+                  Create Signature
+                </Button>
+              </Link>
+              <UserButton afterSignOutUrl="/" />
+            </div>
+          </div>
+
+          {/* Navigation Tabs */}
+          <nav className="flex -mb-px overflow-x-auto">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-6 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
+                    activeTab === tab.id
+                      ? "border-sage-600 text-sage-700 bg-sage-50"
+                      : "border-transparent text-gray-600 hover:text-gray-800 hover:border-sage-300"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      </header>
       
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
@@ -28,42 +69,18 @@ export default function DashboardPage() {
           <p className="text-gray-600 mt-2">Manage your email signatures and track performance.</p>
         </div>
 
-        {/* Tab Navigation */}
+        {/* Tab Content */}
         <div className="bg-white rounded-2xl border border-cream-300 shadow-sm mb-6">
-          <div className="border-b border-cream-300">
-            <nav className="flex -mb-px overflow-x-auto">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 whitespace-nowrap transition-colors ${
-                      activeTab === tab.id
-                        ? "border-sage-600 text-sage-700 bg-sage-50"
-                        : "border-transparent text-gray-600 hover:text-gray-800 hover:border-sage-300"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-
-          {/* Tab Content */}
           <div className="p-6">
-            {activeTab === "signatures" && <SignatureList />}
-            
-            {(activeTab === "analytics" || activeTab === "campaigns") && (
-              <AnalyticsTab initialView={activeTab === "campaigns" ? "campaigns" : "overview"} />
-            )}
+        {/* Tab Content */}
+        {activeTab === "signatures" && <SignatureList />}
+        
+        {(activeTab === "analytics" || activeTab === "campaigns") && (
+          <AnalyticsTab initialView={activeTab === "campaigns" ? "campaigns" : "overview"} />
+        )}
 
-            {activeTab === "settings" && <SettingsTab />}
-            {activeTab === "billing" && <BillingTab />}
-          </div>
-        </div>
+        {activeTab === "settings" && <SettingsTab />}
+        {activeTab === "billing" && <BillingTab />}
       </main>
     </div>
   );
