@@ -89,8 +89,23 @@ export function ActionButtons({ previewRef, signatureId, enableTracking = false,
         html = injectTracking(html, signatureId, true);
       }
       
-      navigator.clipboard.writeText(html).then(() => {
+      // Copy as HTML using the Clipboard API
+      const blob = new Blob([html], { type: 'text/html' });
+      const plainText = previewRef.current.innerText;
+      
+      navigator.clipboard.write([
+        new ClipboardItem({
+          'text/html': blob,
+          'text/plain': new Blob([plainText], { type: 'text/plain' })
+        })
+      ]).then(() => {
         setTimeout(() => setCopying(false), 2000);
+      }).catch((err) => {
+        console.error('Failed to copy:', err);
+        // Fallback to plain text if HTML copy fails
+        navigator.clipboard.writeText(html).then(() => {
+          setTimeout(() => setCopying(false), 2000);
+        });
       });
     }
   };
