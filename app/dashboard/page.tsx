@@ -63,14 +63,6 @@ export default function DashboardPage() {
       </header>
       
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-2">Manage your email signatures and track performance.</p>
-        </div>
-
-        {/* Tab Content */}
-        <div className="bg-white rounded-2xl border border-cream-300 shadow-sm mb-6">
-          <div className="p-6">
         {/* Tab Content */}
         {activeTab === "signatures" && <SignatureList />}
         
@@ -84,8 +76,6 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-
 
 // Settings Tab Component
 function SettingsTab() {
