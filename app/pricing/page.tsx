@@ -3,12 +3,9 @@
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function PricingPage() {
   const [loading, setLoading] = useState(false);
@@ -23,12 +20,15 @@ export default function PricingPage() {
 
     setLoading(true);
     try {
-      const response = await fetch("/api/subscription/create", {
+      const response = await fetch("/api/checkout/create-session", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
       });
-      const { sessionId } = await response.json();
-      const stripe = await stripePromise;
-      await (stripe as any)?.redirectToCheckout({ sessionId });
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
     } catch (error) {
       console.error("Subscription error:", error);
       alert("Failed to start subscription. Please try again.");
