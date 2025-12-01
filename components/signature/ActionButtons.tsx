@@ -86,7 +86,15 @@ export function ActionButtons({ previewRef, signatureId, enableTracking = false,
       
       // Inject tracking if enabled and signatureId is provided
       if (signatureId && enableTracking) {
+        console.log("🔍 Injecting tracking:", { signatureId, enableTracking });
         html = injectTracking(html, signatureId, true);
+        console.log("✅ Tracking injected. HTML length:", html.length);
+      } else {
+        console.log("⚠️ Tracking NOT injected:", { 
+          hasSignatureId: !!signatureId, 
+          enableTracking,
+          reason: !signatureId ? "No signature ID" : !enableTracking ? "Tracking disabled" : "Unknown"
+        });
       }
       
       // Copy as HTML using the Clipboard API
