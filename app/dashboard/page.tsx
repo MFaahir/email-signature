@@ -12,7 +12,8 @@ export default function DashboardPage() {
 
   const tabs = [
     { id: "signatures", label: "My Signatures", icon: FileSignature },
-    { id: "analytics", label: "Analytics", icon: BarChart3 },
+    { id: "analytics", label: "Analytics Overview", icon: BarChart3 },
+    { id: "campaigns", label: "Email Tracking", icon: BarChart3 },
     { id: "settings", label: "Settings", icon: Settings },
     { id: "billing", label: "Billing", icon: CreditCard },
   ];
@@ -54,7 +55,11 @@ export default function DashboardPage() {
           {/* Tab Content */}
           <div className="p-6">
             {activeTab === "signatures" && <SignatureList />}
-            {activeTab === "analytics" && <AnalyticsTab />}
+            
+            {(activeTab === "analytics" || activeTab === "campaigns") && (
+              <AnalyticsTab initialView={activeTab === "campaigns" ? "campaigns" : "overview"} />
+            )}
+
             {activeTab === "settings" && <SettingsTab />}
             {activeTab === "billing" && <BillingTab />}
           </div>

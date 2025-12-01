@@ -23,11 +23,15 @@ interface AnalyticsData {
   }[];
 }
 
-export function AnalyticsTab() {
+interface AnalyticsTabProps {
+  initialView?: "overview" | "campaigns";
+}
+
+export function AnalyticsTab({ initialView = "overview" }: AnalyticsTabProps) {
   const [loading, setLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
   const [data, setData] = useState<AnalyticsData | null>(null);
-  const [activeView, setActiveView] = useState<"overview" | "campaigns">("overview");
+  const [activeView, setActiveView] = useState<"overview" | "campaigns">(initialView);
   const router = useRouter();
 
   useEffect(() => {
@@ -125,30 +129,6 @@ export function AnalyticsTab() {
 
   return (
     <div className="space-y-6">
-      {/* Tab Navigation */}
-      <div className="bg-white rounded-lg border border-cream-300 p-1 inline-flex gap-1 shadow-sm">
-        <button
-          onClick={() => setActiveView("overview")}
-          className={`px-6 py-2.5 rounded-md font-medium transition-all ${
-            activeView === "overview"
-              ? "bg-sage-600 text-white shadow-sm"
-              : "text-gray-600 hover:text-gray-900 hover:bg-cream-100"
-          }`}
-        >
-          Overview
-        </button>
-        <button
-          onClick={() => setActiveView("campaigns")}
-          className={`px-6 py-2.5 rounded-md font-medium transition-all ${
-            activeView === "campaigns"
-              ? "bg-sage-600 text-white shadow-sm"
-              : "text-gray-600 hover:text-gray-900 hover:bg-cream-100"
-          }`}
-        >
-          Email Tracking
-        </button>
-      </div>
-
       {/* Content */}
       {activeView === "campaigns" ? (
         <TrackingCampaigns />
