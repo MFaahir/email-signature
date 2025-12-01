@@ -88,10 +88,22 @@ export function TrackingCampaigns() {
     return `<img src="${baseUrl}/api/track/open/campaign/${uniqueId}" width="1" height="1" style="display:none;opacity:0;visibility:hidden;" alt="" />`;
   };
 
+  const generateTrackingLink = (uniqueId: string, displayText: string = "View in browser") => {
+    const baseUrl = window.location.origin;
+    return `${baseUrl}/api/track/click/campaign/${uniqueId}?url=${encodeURIComponent(window.location.origin)}`;
+  };
+
   const handleCopyPixel = (campaignId: string, uniqueId: string) => {
     const pixelCode = generatePixelCode(uniqueId);
     navigator.clipboard.writeText(pixelCode);
     setCopiedId(campaignId);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleCopyLink = (campaignId: string, uniqueId: string) => {
+    const trackingLink = generateTrackingLink(uniqueId);
+    navigator.clipboard.writeText(trackingLink);
+    setCopiedId(campaignId + '-link');
     setTimeout(() => setCopiedId(null), 2000);
   };
 
@@ -188,24 +200,44 @@ export function TrackingCampaigns() {
                         {new Date(campaign.createdAt).toLocaleDateString()}
                       </div>
                     </div>
-                    <Button
-                      onClick={() => handleCopyPixel(campaign._id, campaign.uniqueId)}
-                      variant="outline"
-                      size="sm"
-                      className="border-sage-300"
-                    >
-                      {copiedId === campaign._id ? (
-                        <>
-                          <Check className="w-4 h-4 mr-2 text-green-600" />
-                          Copied!
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-4 h-4 mr-2" />
-                          Copy Pixel
-                        </>
-                      )}
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleCopyPixel(campaign._id, campaign.uniqueId)}
+                        variant="outline"
+                        size="sm"
+                        className="border-sage-300"
+                      >
+                        {copiedId === campaign._id ? (
+                          <>
+                            <Check className="w-4 h-4 mr-2 text-green-600" />
+                            Copied!
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-4 h-4 mr-2" />
+                            Copy Pixel
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        onClick={() => handleCopyLink(campaign._id, campaign.uniqueId)}
+                        variant="outline"
+                        size="sm"
+                        className="border-blue-300"
+                      >
+                        {copiedId === campaign._id + '-link' ? (
+                          <>
+                            <Check className="w-4 h-4 mr-2 text-green-600" />
+                            Copied!
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-4 h-4 mr-2" />
+                            Copy Link
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
