@@ -27,6 +27,7 @@ export function AnalyticsTab() {
   const [loading, setLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
   const [data, setData] = useState<AnalyticsData | null>(null);
+  const [activeView, setActiveView] = useState<"overview" | "campaigns">("overview");
   const router = useRouter();
 
   useEffect(() => {
